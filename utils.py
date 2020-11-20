@@ -13,7 +13,7 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
-
+# 定义网络
 def get_network(args):
     """ return given network
     """
@@ -145,7 +145,7 @@ def get_network(args):
 
     return net
 
-
+# 得到训练数据集
 def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
     """ return training dataloader
     Args:
@@ -157,7 +157,7 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=Tru
         shuffle: whether to shuffle
     Returns: train_data_loader:torch dataloader object
     """
-
+    # 对数据进行处理
     transform_train = transforms.Compose([
         #transforms.ToPILImage(),
         transforms.RandomCrop(32, padding=4),
@@ -166,12 +166,14 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=Tru
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    cifar10_training = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+    # 训练数据加载
+    cifar10_training = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
     cifar10_training_loader = DataLoader(
         cifar10_training, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
     return cifar10_training_loader
 
+# 测试数据集打包
 def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
     """ return training dataloader
     Args:
@@ -183,17 +185,18 @@ def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
         shuffle: whether to shuffle
     Returns: cifar10_test_loader:torch dataloader object
     """
-
+    # 数据处理
     transform_test = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    cifar10_test = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+    cifar10_test = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
     cifar10_test_loader = DataLoader(
         cifar10_test, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
     return cifar10_test_loader
 
+# 计算平均值和方差
 def compute_mean_std(cifar10_dataset):
     """compute the mean and std of cifar10 dataset
     Args:
@@ -212,6 +215,7 @@ def compute_mean_std(cifar10_dataset):
 
     return mean, std
 
+# 调整学习率
 class WarmUpLR(_LRScheduler):
     """warmup_training learning rate scheduler
     Args:

@@ -131,9 +131,11 @@ if __name__ == '__main__':
     parser.add_argument('-lr', type=float, default=0.1, help='initial learning rate')
     args = parser.parse_args()
 
+    # 选择net
     net = get_network(args)
 
-    #data preprocessing:
+    # data preprocessing:
+    # 构建数据装载器：train
     cifar10_training_loader = get_training_dataloader(
         settings.CIFAR10_TRAIN_MEAN,
         settings.CIFAR10_TRAIN_STD,
@@ -142,6 +144,7 @@ if __name__ == '__main__':
         shuffle=True
     )
 
+    # 构建数据装载器：test
     cifar10_test_loader = get_test_dataloader(
         settings.CIFAR10_TRAIN_MEAN,
         settings.CIFAR10_TRAIN_STD,
@@ -150,11 +153,21 @@ if __name__ == '__main__':
         shuffle=True
     )
 
+    # 损失函数为交叉熵损失函数
     loss_function = nn.CrossEntropyLoss()
+
+    # 优化器为SGD
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
+    # 设置优化器调整学习率的方法
     train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES, gamma=0.2) #learning rate decay
+
+    # 设置epoch
     iter_per_epoch = len(cifar10_training_loader)
+
+    # 预热学习率warmup_scheduler
     warmup_scheduler = WarmUpLR(optimizer, iter_per_epoch * args.warm)
+
+    # 路径
     checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net, settings.TIME_NOW)
 
     #create checkpoint folder to save model
@@ -162,20 +175,28 @@ if __name__ == '__main__':
         os.makedirs(checkpoint_path)
     checkpoint_path = os.path.join(checkpoint_path, '{net}-{epoch}-{type}.pth')
 
+    # 初始化准确率
     best_acc = 0.0
+
+    # 迭代
     for epoch in range(1, settings.EPOCH):
         if epoch > args.warm:
             train_scheduler.step(epoch)
 
+        # 训练模式
         train(epoch)
+        # 准确率=验证模式的返回
         acc = eval_training(epoch)
 
+        # 保存最好的模型参数
         #start to save best performance model after learning rate decay to 0.01
         if epoch > settings.MILESTONES[1] and best_acc < acc:
+            # 保存模型
             torch.save(net.state_dict(), checkpoint_path.format(net=args.net, epoch=epoch, type='best'))
             best_acc = acc
             continue
 
         if not epoch % settings.SAVE_EPOCH:
+            # 保存模型
             torch.save(net.state_dict(), checkpoint_path.format(net=args.net, epoch=epoch, type='regular'))
 
