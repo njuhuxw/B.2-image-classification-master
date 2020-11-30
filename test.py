@@ -51,6 +51,8 @@ if __name__ == '__main__':
     correct_5 = 0.0
     total = 0
 
+    results = []
+
     with torch.no_grad():
         # 枚举
         for n_iter, (image, label) in enumerate(cifar100_test_loader):
