@@ -167,11 +167,11 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=Tru
         transforms.Normalize(mean, std)
     ])
     # 训练数据加载
-    cifar10_training = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
-    cifar10_training_loader = DataLoader(
-        cifar10_training, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
+    cifar100_training = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
+    cifar100_training_loader = DataLoader(
+        cifar100_training, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
-    return cifar10_training_loader
+    return cifar100_training_loader
 
 # 测试数据集打包
 def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
@@ -190,14 +190,14 @@ def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    cifar10_test = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
-    cifar10_test_loader = DataLoader(
-        cifar10_test, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
+    cifar100_test = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
+    cifar100_test_loader = DataLoader(
+        cifar100_test, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
-    return cifar10_test_loader
+    return cifar100_test_loader
 
 # 计算平均值和方差
-def compute_mean_std(cifar10_dataset):
+def compute_mean_std(cifar100_dataset):
     """compute the mean and std of cifar10 dataset
     Args:
         cifar10_training_dataset or cifar10_test_dataset
@@ -207,9 +207,9 @@ def compute_mean_std(cifar10_dataset):
         a tuple contains mean, std value of entire dataset
     """
 
-    data_r = numpy.dstack([cifar10_dataset[i][1][:, :, 0] for i in range(len(cifar10_dataset))])
-    data_g = numpy.dstack([cifar10_dataset[i][1][:, :, 1] for i in range(len(cifar10_dataset))])
-    data_b = numpy.dstack([cifar10_dataset[i][1][:, :, 2] for i in range(len(cifar10_dataset))])
+    data_r = numpy.dstack([cifar100_dataset[i][1][:, :, 0] for i in range(len(cifar100_dataset))])
+    data_g = numpy.dstack([cifar100_dataset[i][1][:, :, 1] for i in range(len(cifar100_dataset))])
+    data_b = numpy.dstack([cifar100_dataset[i][1][:, :, 2] for i in range(len(cifar100_dataset))])
     mean = numpy.mean(data_r), numpy.mean(data_g), numpy.mean(data_b)
     std = numpy.std(data_r), numpy.std(data_g), numpy.std(data_b)
 

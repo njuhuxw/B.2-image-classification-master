@@ -33,7 +33,7 @@ def train(epoch):
     net.train()
 
     # 将data数据集进行枚举，取一小批量batch
-    for batch_index, (images, labels) in enumerate(cifar10_training_loader):
+    for batch_index, (images, labels) in enumerate(cifar100_training_loader):
 
         # 判断epoch是否满足参数设置
         if epoch <= args.warm:
@@ -62,7 +62,7 @@ def train(epoch):
             optimizer.param_groups[0]['lr'],
             epoch=epoch,
             trained_samples=batch_index * args.b + len(images),
-            total_samples=len(cifar10_training_loader.dataset)
+            total_samples=len(cifar100_training_loader.dataset)
         ))
 
     # 计时结束时间
@@ -85,7 +85,7 @@ def eval_training(epoch):
     correct = 0.0
 
     # 将data数据集进行枚举，取一小批量batch
-    for (images, labels) in cifar10_test_loader:
+    for (images, labels) in cifar100_test_loader:
 
         # 判断是不是GPU
         if args.gpu:
@@ -110,14 +110,14 @@ def eval_training(epoch):
         print('Use GPU')
     print('Evaluating Network.....')
     print('Test set: Average loss: {:.4f}, Accuracy: {:.4f}, Time consumed:{:.2f}s'.format(
-        test_loss / len(cifar10_test_loader.dataset),
-        correct.float() / len(cifar10_test_loader.dataset),
+        test_loss / len(cifar100_test_loader.dataset),
+        correct.float() / len(cifar100_test_loader.dataset),
         finish - start
     ))
     print()
 
     # 返回正确率
-    return correct.float() / len(cifar10_test_loader.dataset)
+    return correct.float() / len(cifar100_test_loader.dataset)
 
 # 主函数
 if __name__ == '__main__':
@@ -136,18 +136,18 @@ if __name__ == '__main__':
 
     # data preprocessing:
     # 构建数据装载器：train
-    cifar10_training_loader = get_training_dataloader(
-        settings.CIFAR10_TRAIN_MEAN,
-        settings.CIFAR10_TRAIN_STD,
+    cifar100_training_loader = get_training_dataloader(
+        settings.CIFAR100_TRAIN_MEAN,
+        settings.CIFAR100_TRAIN_STD,
         num_workers=4,
         batch_size=args.b,
         shuffle=True
     )
 
     # 构建数据装载器：test
-    cifar10_test_loader = get_test_dataloader(
-        settings.CIFAR10_TRAIN_MEAN,
-        settings.CIFAR10_TRAIN_STD,
+    cifar100_test_loader = get_test_dataloader(
+        settings.CIFAR100_TRAIN_MEAN,
+        settings.CIFAR100_TRAIN_STD,
         num_workers=4,
         batch_size=args.b,
         shuffle=True
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES, gamma=0.2) #learning rate decay
 
     # 设置epoch
-    iter_per_epoch = len(cifar10_training_loader)
+    iter_per_epoch = len(cifar100_training_loader)
 
     # 预热学习率warmup_scheduler
     warmup_scheduler = WarmUpLR(optimizer, iter_per_epoch * args.warm)

@@ -31,9 +31,9 @@ if __name__ == '__main__':
     # 网络框架
     net = get_network(args)
     # 构建数据装载器：test
-    cifar10_test_loader = get_test_dataloader(
-        settings.CIFAR10_TRAIN_MEAN,
-        settings.CIFAR10_TRAIN_STD,
+    cifar100_test_loader = get_test_dataloader(
+        settings.CIFAR100_TRAIN_MEAN,
+        settings.CIFAR100_TRAIN_STD,
         num_workers=4,
         batch_size=args.b,
     )
@@ -51,8 +51,8 @@ if __name__ == '__main__':
 
     with torch.no_grad():
         # 枚举
-        for n_iter, (image, label) in enumerate(cifar10_test_loader):
-            print("iteration: {}\ttotal {} iterations".format(n_iter + 1, len(cifar10_test_loader)))
+        for n_iter, (image, label) in enumerate(cifar100_test_loader):
+            print("iteration: {}\ttotal {} iterations".format(n_iter + 1, len(cifar100_test_loader)))
             # 判断是否用gpu
             if args.gpu:
                 image = image.cuda()
@@ -73,6 +73,6 @@ if __name__ == '__main__':
 
     # 打印输出
     print()
-    print("Top 1 err: ", 1 - correct_1 / len(cifar10_test_loader.dataset))
-    print("Top 5 err: ", 1 - correct_5 / len(cifar10_test_loader.dataset))
+    print("Top 1 err: ", 1 - correct_1 / len(cifar100_test_loader.dataset))
+    print("Top 5 err: ", 1 - correct_5 / len(cifar100_test_loader.dataset))
     print("Parameter numbers: {}".format(sum(p.numel() for p in net.parameters())))
