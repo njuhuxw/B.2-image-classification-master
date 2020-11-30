@@ -8,8 +8,11 @@ author baiyu
 
 import os
 import sys
+# 参数
 import argparse
+# 时间
 import time
+# 用于获取当前时间
 from datetime import datetime
 
 import numpy as np
@@ -20,7 +23,9 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
+# 导入conf文件夹下的settings
 from conf import settings
+# 导入utuls文件夹下的相关文件
 from utils import get_network, get_training_dataloader, get_test_dataloader, WarmUpLR
 
 # 定义训练函数
@@ -89,7 +94,9 @@ def eval_training(epoch):
 
         # 判断是不是GPU
         if args.gpu:
+            # 转换为cuda张量
             images = images.cuda()
+            # 转换为cuda张量
             labels = labels.cuda()
 
         # 网络预测输出
@@ -100,6 +107,7 @@ def eval_training(epoch):
         test_loss += loss.item()
         # 求正确率
         _, preds = outputs.max(1)
+        # 预测正确样本的累加
         correct += preds.eq(labels).sum()
 
     # 计时结束时间
@@ -171,8 +179,11 @@ if __name__ == '__main__':
     checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net, settings.TIME_NOW)
 
     #create checkpoint folder to save model
+    #  判断checkpoint_path是否存在
     if not os.path.exists(checkpoint_path):
+        # 创建
         os.makedirs(checkpoint_path)
+    # 更新
     checkpoint_path = os.path.join(checkpoint_path, '{net}-{epoch}-{type}.pth')
 
     # 初始化准确率
@@ -193,9 +204,12 @@ if __name__ == '__main__':
         if epoch > settings.MILESTONES[1] and best_acc < acc:
             # 保存模型
             torch.save(net.state_dict(), checkpoint_path.format(net=args.net, epoch=epoch, type='best'))
+            # 保存最好的结果
             best_acc = acc
+            # 结束循环
             continue
 
+        # 每10个epoch保存一次模型参数
         if not epoch % settings.SAVE_EPOCH:
             # 保存模型
             torch.save(net.state_dict(), checkpoint_path.format(net=args.net, epoch=epoch, type='regular'))
