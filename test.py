@@ -76,6 +76,13 @@ if __name__ == '__main__':
             #compute top1
             correct_1 += correct[:, :1].sum()
 
+            preds = pred.cpu().numpy()[:,0].tolist()
+            results.extend(preds)
+    print(len(results))
+    with open('results_{}.txt'.format(args.net), 'w') as f:
+        for item in results:
+            f.write(str(item)+'\n')
+
     # 打印输出
     print()
     print("Top 1 err: ", 1 - correct_1 / len(cifar100_test_loader.dataset))

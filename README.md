@@ -108,10 +108,10 @@ $ python test.py -net vgg16 -weights path_to_vgg16_weights_file
 
 |dataset|network|params|top1 err|top5 err|memory|
 |:---:|:---:|:---:|:---:|:---:|:---:|
-|cifar100|vgg16_bn|34.0M|27.07|8.84|2.03GB|
-|cifar100||||||
-|cifar100||||||
-|cifar100||||||
+|cifar100|vgg16_bn |34.0M|27.07|8.84|2.03GB|
+|cifar100|vgg13_bn |27.37M|33.12|10.94|109.49MB|
+|cifar100|vgg11_bn |27.18M|36.14|12.92|108.79MB|
+|cifar100|mobilenet|3.16M|36.81|11.97|12.64MB|
 
 
 
